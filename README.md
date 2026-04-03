@@ -83,7 +83,6 @@ To ensure a stable user experience:
 - localStorage is used to maintain login state across refresh
 - refresh tokens are used when available to renew sessions
 
-> In production systems, this would be improved using a shared domain setup or in-memory token storage.
 
 ---
 
@@ -140,50 +139,69 @@ To ensure a stable user experience:
 ```bash
 git clone https://github.com/YOUR_USERNAME/task-management-system.git
 cd task-management-system
+```
 
-2. Install Dependencies
+### 2. Install Dependencies
+
+```bash
 cd backend
 npm install
 
 cd ../frontend
 npm install
-3. Environment Variables
+```
 
+### 3. Environment Variables
+
+```bash
 Create .env in backend:
 
 DATABASE_URL=your_mysql_connection_string
 JWT_ACCESS_SECRET=your_access_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 FRONTEND_URL=http://localhost:3000
-4. Run Project
+```
+
+### 4. Run Project
+
+```bash
 # Backend
 npm run dev
 
 # Frontend
 npm run dev
-📊 API Endpoints
+```
+
+## 📊 API Endpoints
 Auth
+```bash
 POST /auth/register
 POST /auth/login
 POST /auth/refresh
 POST /auth/logout
+```
+
 Tasks
+```bash
 GET /tasks (pagination + filter + search)
 POST /tasks
 PATCH /tasks/:id
 DELETE /tasks/:id
 PATCH /tasks/:id/toggle
-🧠 Key Highlights
+```
+
+## 🧠 Key Highlights
 Clean separation of concerns (Controller → Service → DB)
 Scalable backend architecture
 Secure authentication design
 Efficient data handling (pagination + filtering)
-👨‍💻 Author
 
+
+##👨‍💻 Author
 Lalit Kumar Yadav
 Developed for Software Engineering Assessment (Track A)
 
-💡 Note to Reviewers
+##💡 Note to Reviewers
 
 This project focuses on:
 
