@@ -5,13 +5,13 @@ import { setAccessToken } from '@/lib/tokenStore';
 export const authService = {
   register: async (data: any): Promise<AuthResponse> => {
     const response = await api.post('/auth/register', data);
-    setAccessToken(response.data.accessToken); // Save to memory
+    setAccessToken(response.data.accessToken); 
     return response.data;
   },
 
   login: async (data: any): Promise<AuthResponse> => {
     const response = await api.post('/auth/login', data);
-    setAccessToken(response.data.accessToken); // Save to memory
+    setAccessToken(response.data.accessToken); 
     return response.data;
   },
 
@@ -19,14 +19,14 @@ export const authService = {
     try {
       await api.post('/auth/logout');
     } finally {
-      setAccessToken(null); // Wipe memory
+      setAccessToken(null); 
       window.location.href = '/login';
     }
   },
 
-  // Used by AuthProvider for silent refresh on page load
-  refresh: async (): Promise<string> => {
+  // Updated to Promise<any> to allow AuthProvider to handle the object/string logic
+  refresh: async (): Promise<any> => {
     const response = await api.post('/auth/refresh', {}, { withCredentials: true });
-    return response.data; // Should return { accessToken: '...' }
+    return response.data; 
   }
 };
