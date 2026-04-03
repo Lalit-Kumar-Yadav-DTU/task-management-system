@@ -9,6 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^22.x.x",
+    "@types/react": "^19.x.x",
+    "@types/react-dom": "^19.x.x",
     "axios": "^1.14.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.7.0",
@@ -19,11 +23,8 @@
     "react-hot-toast": "^2.6.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
-    "@tailwindcss/postcss": "^4.2.2",
     "typescript": "^5.7.0",
-    "@types/node": "^22.x.x",
-    "@types/react": "^19.x.x",
-    "@types/react-dom": "^19.x.x"
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "eslint": "^9",
