@@ -24,11 +24,12 @@ export const getAll = async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-    // FIX: Safely parse query parameters to strings
     const page = parseInt(String(req.query.page || '1')) || 1;
     const limit = parseInt(String(req.query.limit || '9')) || 9;
     const search = req.query.search ? String(req.query.search) : undefined;
-    const status = req.query.status ? String(req.query.status) : undefined;
+    
+    // FIX: Cast status to the specific union type your service expects
+    const status = req.query.status ? (String(req.query.status) as "TODO" | "DONE") : undefined;
 
     const result = await taskService.getTasks(userId, { 
       page, 
@@ -53,7 +54,8 @@ export const update = async (req: Request, res: Response) => {
   }
 
   try {
-    const taskId = parseInt(req.params.id);
+    // FIX: Ensure taskId is parsed from a guaranteed string
+    const taskId = parseInt(String(req.params.id));
     const task = await taskService.updateTask(taskId, userId, validation.data);
     res.status(200).json({ success: true, data: task });
   } catch (error) {
@@ -66,7 +68,8 @@ export const remove = async (req: Request, res: Response) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-    const taskId = parseInt(req.params.id);
+    // FIX: Ensure taskId is parsed from a guaranteed string
+    const taskId = parseInt(String(req.params.id));
     await taskService.deleteTask(taskId, userId);
     res.status(200).json({ success: true, message: "Deleted" });
   } catch (error) {
