@@ -69,7 +69,7 @@ export const authService = {
    * It fetches the latest fullName and email from the database.
    */
   getProfile: async (): Promise<{ user: User }> => {
-    const response = await api.get('/auth/profile');
+    const response = await api.get('/auth/me');
     return response.data;
   }
 };
