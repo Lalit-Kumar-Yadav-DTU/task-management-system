@@ -1,10 +1,22 @@
 // Deployment Fix - April 2026
+// Optimized for Cross-Origin (Render) Deployment
 
 import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { registerSchema, loginSchema } from '../validators/auth.validator.js';
-
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils.js';
+
+/**
+ * Common Cookie Options for Cross-Origin Production
+ * sameSite: 'none' is required because frontend and backend are on different URLs
+ * secure: true is required by browsers whenever sameSite is 'none'
+ */
+const cookieOptions = {
+  httpOnly: true,
+  secure: true, // Always true in production for Cross-Origin cookies
+  sameSite: 'none' as const, // Cast as const for TypeScript
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
 
 export const register = async (req: Request, res: Response) => {
   const validation = registerSchema.safeParse(req.body);
@@ -20,19 +32,14 @@ export const register = async (req: Request, res: Response) => {
     // 1. Create the user in the DB
     const user = await authService.registerUser(validation.data);
     
-    // 2. Generate Tokens (Auto-Login logic)
+    // 2. Generate Tokens
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // 3. Set the Refresh Token in a secure cookie
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    // 3. Set the Refresh Token in a secure cross-origin cookie
+    res.cookie('refreshToken', refreshToken, cookieOptions);
 
-    // 4. Return everything to the frontend
+    // 4. Return response
     res.status(201).json({
       success: true,
       message: 'User registered and logged in successfully',
@@ -57,12 +64,8 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { accessToken, refreshToken, user } = await authService.loginUser(validation.data);
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    // Set the Refresh Token in a secure cross-origin cookie
+    res.cookie('refreshToken', refreshToken, cookieOptions);
 
     res.status(200).json({
       message: 'Login successful',
@@ -91,7 +94,12 @@ export const refresh = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   try {
-    res.clearCookie('refreshToken');
+    // When clearing, use the same sameSite/secure options to ensure browser compliance
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error: any) {
     res.status(500).json({ error: 'Logout failed' });
@@ -100,7 +108,6 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    // req.user was set by our middleware!
     const userId = req.user?.id;
 
     res.status(200).json({
