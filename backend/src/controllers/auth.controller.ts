@@ -1,3 +1,5 @@
+// Deployment Fix - April 2026
+
 import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { registerSchema, loginSchema } from '../validators/auth.validator.js';
