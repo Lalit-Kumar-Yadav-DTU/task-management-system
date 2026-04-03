@@ -19,14 +19,14 @@
     "react-hot-toast": "^2.6.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
-    "@tailwindcss/postcss": "^4.2.2"
+    "@tailwindcss/postcss": "^4.2.2",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.x.x",
+    "@types/react": "^19.x.x",
+    "@types/react-dom": "^19.x.x"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.2",
-    "typescript": "^5"
+    "eslint-config-next": "16.2.2"
   }
 }
