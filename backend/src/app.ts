@@ -5,7 +5,10 @@ import routes from './routes/index.js';
 
 const app: Application = express();
 
-// 1. Standard Middleware
+// 🚀 CRITICAL FOR RENDER/DEPLOYMENT:
+// This tells Express it is behind a proxy and to trust the HTTPS headers
+app.set('trust proxy', 1); 
+
 app.use(express.json());
 app.use(cookieParser());
 
