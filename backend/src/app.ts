@@ -12,7 +12,7 @@ app.use(cookieParser());
 // 2. Define allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://task-manager-frontend-g9vb.onrender.com'
+  'https://task-management-frontend-g9vb.onrender.com'
 ];
 
 // 3. CORS Configuration
