@@ -9,10 +9,14 @@ const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Updated CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow your frontend
-  credentials: true,               // CRITICAL: Allow cookies to be sent
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  origin: [
+    'http://localhost:3000', // Local development
+    'https://task-manager-frontend-g9vb.onrender.com' // Your live Render frontend
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
