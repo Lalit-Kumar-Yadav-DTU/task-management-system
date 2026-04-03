@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment Variables
+.env
+.env.local
+**/.env
+**/.env.local
+
+# Build Outputs
+.next/
+dist/
+build/
+out/
+
+# Logs and Debug
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
