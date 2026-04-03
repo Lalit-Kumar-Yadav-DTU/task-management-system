@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { registerSchema, loginSchema } from '../validators/auth.validator.js';
 
-import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { registerSchema } from '../validators/auth.validator.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils.js';
