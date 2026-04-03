@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/auth.service';
-import { useAuth } from '@/components/shared/AuthProvider'; // <-- THIS WAS MISSING
+import { useAuth } from '@/components/shared/AuthProvider';
 import { toast, Toaster } from 'react-hot-toast';
 import { LogIn, Mail, Lock, Loader2, ShieldCheck } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { syncToken } = useAuth(); // Now this will work
+  const { syncToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
 
@@ -21,13 +21,14 @@ export default function LoginPage() {
     try {
       const response = await authService.login(formData);
       
-      // Update the global reactive state
-      syncToken(response.accessToken); 
+      // FIX: Pass both arguments to match the updated AuthProvider signature
+      // Based on your backend, response contains { accessToken, user }
+      syncToken(response.accessToken, response.user); 
       
       toast.success('Successfully logged in');
       router.push('/tasks'); 
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Invalid credentials');
+      toast.error(error.response?.data?.error || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -36,7 +37,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12 font-sans">
       <Toaster position="top-center" />
-      
       <div className="max-w-md w-full space-y-8 bg-white p-6 sm:p-10 rounded-2xl shadow-xl border border-slate-100">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
@@ -59,7 +59,6 @@ export default function LoginPage() {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
-
             <div className="relative group">
               <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
               <input
@@ -98,10 +97,33 @@ export default function LoginPage() {
 }
 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 'use client';
+
+// import React, { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import Link from 'next/link';
+// import { authService } from '@/services/auth.service';
+// import { useAuth } from '@/components/shared/AuthProvider'; // <-- THIS WAS MISSING
+// import { toast, Toaster } from 'react-hot-toast';
+// import { LogIn, Mail, Lock, Loader2, ShieldCheck } from 'lucide-react';
 
 // export default function LoginPage() {
 //   const router = useRouter();
+//   const { syncToken } = useAuth(); // Now this will work
 //   const [loading, setLoading] = useState(false);
 //   const [formData, setFormData] = useState({ email: '', password: '' });
 
@@ -110,7 +132,11 @@ export default function LoginPage() {
 //     setLoading(true);
 
 //     try {
-//       await authService.login(formData);
+//       const response = await authService.login(formData);
+      
+//       // Update the global reactive state
+//       syncToken(response.accessToken); 
+      
 //       toast.success('Successfully logged in');
 //       router.push('/tasks'); 
 //     } catch (error: any) {
@@ -135,7 +161,6 @@ export default function LoginPage() {
 
 //         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
 //           <div className="space-y-4">
-//             {/* Email */}
 //             <div className="relative group">
 //               <Mail className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
 //               <input
@@ -148,7 +173,6 @@ export default function LoginPage() {
 //               />
 //             </div>
 
-//             {/* Password */}
 //             <div className="relative group">
 //               <Lock className="absolute left-3 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
 //               <input
