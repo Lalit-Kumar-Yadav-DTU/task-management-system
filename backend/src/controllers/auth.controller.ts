@@ -1,18 +1,9 @@
-// backend/src/controllers/auth.controller.ts
-// Deployment Fix - April 2026
-// Optimized for Hybrid Strategy (LocalStorage AccessToken + Cookie RefreshToken)
-
 import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { registerSchema, loginSchema } from '../validators/auth.validator.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils.js';
-import prisma from '../config/db.js'; // Using your existing prisma config
+import prisma from '../config/db.js';
 
-/**
- * Common Cookie Options for Cross-Origin Production
- * sameSite: 'none' is required because frontend and backend are on different URLs
- * secure: true is required by browsers whenever sameSite is 'none'
- */
 const cookieOptions = {
   httpOnly: true,
   secure: true, 
@@ -32,23 +23,17 @@ export const register = async (req: Request, res: Response) => {
   try {
     const user = await authService.registerUser(validation.data);
     
+    // Generate tokens for the new user
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Set Refresh Token in Cookie
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
-    // Return Access Token in JSON for localStorage
     res.status(201).json({
       message: 'User registered successfully',
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email
-      },
+      user, // Contains id, fullName, email
       accessToken 
     });
-
   } catch (error: any) {
     res.status(400).json({ error: error.message || 'Registration failed' });
   }
@@ -66,18 +51,12 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { accessToken, refreshToken, user } = await authService.loginUser(validation.data);
 
-    // Set Refresh Token in Cookie
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
-    // Return Access Token in JSON for localStorage
     res.status(200).json({
       message: 'Login successful',
       accessToken,
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email
-      }
+      user // Contains id, fullName, email
     });
   } catch (error: any) {
     res.status(401).json({ error: error.message || 'Invalid credentials' });
@@ -93,8 +72,6 @@ export const refresh = async (req: Request, res: Response) => {
     }
 
     const newAccessToken = await authService.refreshSession(token);
-    
-    // Return the new Access Token in JSON
     res.status(200).json({ accessToken: newAccessToken });
   } catch (error: any) {
     res.status(401).json({ error: 'Session expired, please login again' });
@@ -103,6 +80,9 @@ export const refresh = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   try {
+    // Optional: If you have auth middleware, you can clear DB token too:
+    // if (req.user) await authService.logoutUser(req.user.id);
+
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: true,
@@ -116,14 +96,12 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getProfile = async (req: Request, res: Response) => {
   try {
-    // req.user is populated by your auth middleware (protect route)
     const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    // Fetch full user details from the database
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -142,8 +120,6 @@ export const getProfile = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
 
 
 
